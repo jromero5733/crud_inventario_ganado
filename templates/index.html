@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario de Ganado</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- Contenedor principal para la página -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Inventario de Ganado</h1>
+        
+        <!-- Botón para agregar un nuevo ganado -->
+        <div class="d-flex justify-content-between mb-4">
+            <a href="/add" class="btn btn-primary">Agregar Nuevo Ganado</a>
+            <a href="/add_raza" class="btn btn-secondary">Agregar Nueva Raza</a>
+        </div>
+
+        <!-- Sección de reportes -->
+        <div class="mb-4">
+            <p class="reportes-title">Reportes</p>
+            <div class="btn-group">
+                <!-- Botones para exportar los reportes en diferentes formatos -->
+                <a href="/report/pdf" class="btn btn-danger">Exportar a PDF</a>
+                <a href="/report/csv" class="btn btn-success">Exportar a CSV</a>
+                <a href="/report/excel" class="btn btn-primary">Exportar a Excel</a>
+            </div>
+        </div>
+        
+        <!-- Formulario para seleccionar los filtros -->
+        <div class="card">
+            <div class="card-body">
+                <form action="/" method="GET" class="mb-4">
+                    <div class="row g-3 align-items-center">
+                        <!-- Selector de tipo de filtro -->
+                        <div class="col-md-4">
+                            <label for="filter_type" class="form-label">Seleccionar Filtro</label>
+                            <select id="filter_type" class="form-select" name="filter_type" onchange="this.form.submit()">
+                                <!-- Opciones para los filtros, con lógica para marcar el filtro seleccionado -->
+                                <option value="all" {% if filter_type == 'all' %} selected {% endif %}>Mostrar todos</option>
+                                <option value="search" {% if filter_type == 'search' %} selected {% endif %}>Buscar por ID</option>
+                                <option value="raza" {% if filter_type == 'raza' %} selected {% endif %}>Buscar por raza</option>
+                                <option value="age" {% if filter_type == 'age' %} selected {% endif %}>Filtrar por edad</option>
+                                <option value="price" {% if filter_type == 'price' %} selected {% endif %}>Filtrar por precio</option>
+                                <option value="weight" {% if filter_type == 'weight' %} selected {% endif %}>Filtrar por peso</option>
+                            </select>
+                        </div>
+
+                        <!-- Filtro por ID -->
+                        <div id="filter_search" class="col-md-4 {% if filter_type == 'search' %} d-block {% else %} d-none {% endif %}">
+                            <label for="search" class="form-label">Buscar por ID</label>
+                            <input type="text" name="search" id="search" class="form-control" placeholder="Escribe aquí" value="{{ search }}">
+                        </div>
+
+                        <!-- Filtro por Raza -->
+                        <div id="filter_name" class="col-md-4 {% if filter_type == 'raza' %} d-block {% else %} d-none {% endif %}">
+                            <label for="raza" class="form-label">Buscar por Raza</label>
+                            <select name="raza" id="raza" class="form-select">
+                                <option value="">Seleccione una raza</option>
+                                {% for raza in razas %}
+                                    <option value="{{ raza.id }}" {% if raza.id == raza %} selected {% endif %}>{{ raza.nombre }}</option>
+                                {% endfor %}
+                            </select>
+                            
+                        </div>                       
+                        
+
+                        <!-- Filtro por Edad -->
+                        <div id="filter_age" class="col-md-4 {% if filter_type == 'age' %} d-block {% else %} d-none {% endif %}">
+                            <label for="min_edad" class="form-label">Rango de Edad</label>
+                            <div class="input-group">
+                                <input type="number" name="min_edad" class="form-control" placeholder="Mínimo" value="{{ min_edad }}">
+                                <input type="number" name="max_edad" class="form-control" placeholder="Máximo" value="{{ max_edad }}">
+                            </div>
+                        </div>
+
+                        <!-- Filtro por Precio -->
+                        <div id="filter_price" class="col-md-4 {% if filter_type == 'price' %} d-block {% else %} d-none {% endif %}">
+                            <label for="min_precio" class="form-label">Rango de Precio</label>
+                            <div class="input-group">
+                                <input type="number" name="min_precio" class="form-control" placeholder="Mínimo" value="{{ min_precio }}">
+                                <input type="number" name="max_precio" class="form-control" placeholder="Máximo" value="{{ max_precio }}">
+                            </div>
+                        </div>
+
+                        <!-- Filtro por Peso -->
+                        <div id="filter_weight" class="col-md-4 {% if filter_type == 'weight' %} d-block {% else %} d-none {% endif %}">
+                            <label for="min_peso" class="form-label">Rango de Peso</label>
+                            <div class="input-group">
+                                <input type="number" name="min_peso" class="form-control" placeholder="Mínimo" value="{{ min_peso }}">
+                                <input type="number" name="max_peso" class="form-control" placeholder="Máximo" value="{{ max_peso }}">
+                            </div>
+                        </div>
+
+                        <!-- Botón de búsqueda -->
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100 mt-4">Buscar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Tabla para mostrar los datos de ganado -->
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Raza</th>
+                    <th>Peso</th>
+                    <th>Edad</th>
+                    <th>Precio</th>
+                    <th>Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Iteración para mostrar cada ganado en la tabla -->
+                {% for ganado in ganado %}
+                <tr>
+                    <td>{{ ganado.id }}</td>
+                    <td>{{ ganado.raza }}</td>
+                    <td>{{ ganado.peso }} kg</td>
+                    <td>{{ ganado.edad }}</td>
+                    <td>${{ ganado.precio }}</td>
+                    <td>
+                        <!-- Botones de acciones para editar y eliminar el ganado -->
+                        <a href="/update/{{ ganado.id }}" class="btn btn-warning btn-sm">Editar</a>
+                        <form action="/delete/{{ ganado.id }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </td> 
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

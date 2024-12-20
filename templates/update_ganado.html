@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actualizar Ganado</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <!-- Contenedor principal de la página-->
+    <div class="container mt-5">
+        <!-- Título principal de la página -->
+        <h1 class="text-center mb-4">Editar información</h1>
+
+        <!-- Formulario para actualizar los detalles de un ganado específico -->
+        <form action="/update/{{ ganado.id }}" method="POST">
+            <!-- Campo para seleccionar la raza del ganado -->
+            <div class="mb-3">
+                <label for="raza" class="form-label">Raza</label>
+                <select name="raza" id="raza" class="form-select">
+                    <option value="">Seleccione una raza</option>
+                    {% for raza in razas %}
+                    <option value="{{ raza.id }}" {% if raza.id == ganado.raza_id %} selected {% endif %}>{{ raza.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Campo para actualizar el peso del ganado -->
+            <div class="mb-3">
+                <label for="peso" class="form-label">Peso</label>
+                <input type="text" id="peso" name="peso" class="form-control" value="{{ ganado.peso }}" required>
+            </div>
+
+            <!-- Campo para actualizar la edad del ganado -->
+            <div class="mb-3">
+                <label for="edad" class="form-label">Edad</label>
+                <input type="text" id="edad" name="edad" class="form-control" value="{{ ganado.edad }}" required>
+            </div>
+
+            <!-- Campo para actualizar el precio del ganado -->
+            <div class="mb-3">
+                <label for="precio" class="form-label">Precio</label>
+                <input type="text" id="precio" name="precio" class="form-control" value="{{ ganado.precio }}" required>
+            </div>
+
+            <!-- Botón para enviar el formulario de actualización -->
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+        </form>
+
+        <!-- Enlace para volver a la página principal de la lista de ganado -->
+        <a href="/" class="btn btn-secondary mt-3">Volver a la página principal</a>
+    </div>
+</body>
+</html>

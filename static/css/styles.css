@@ -1,0 +1,66 @@
+/* /static/css/styles.css */
+
+body {
+    background-color: #f8f9fa;
+}
+
+.container {
+    max-width: 900px;
+    margin-top: 50px;
+}
+
+h1 {
+    color: #007bff;
+}
+
+table th, table td {
+    text-align: center;
+}
+
+table th {
+    background-color: #007bff;
+    
+}
+
+table td {
+    background-color: #f1f1f1;
+}
+
+a.btn {
+    margin-right: 5px;
+}
+
+a.btn:hover {
+    text-decoration: none;
+    opacity: 0.8;
+}
+
+.card {
+    margin-bottom: 20px;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+.btn-group .btn {
+    margin-right: 10px;
+}
+
+.form-select, .form-control {
+    box-shadow: none;
+}
+
+.input-group input {
+    border-radius: .375rem;
+}
+
+.container {
+    max-width: 1200px;
+}
+
+.reportes-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
